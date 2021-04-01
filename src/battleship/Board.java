@@ -1,21 +1,51 @@
 package battleship;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Board {
     public static final int MAX_ROWS = 10;
     public static final int MAX_COLS = 10;
 
+    public static final Pattern COORDINATE_PATTERN = Pattern.compile(" *([A-Za-z][1-9][0-9]*) *");
+    public static final Pattern COORDINATE_PAIR_PATTERN = Pattern.compile(" *([A-Za-z][1-9][0-9]*) *([A-Za-z][1-9][0-9]*) *");
+
     final private char[][] field;
     private int o;
 
-    public static int letterToRow(final char letter) {
-        final int row = letter - 'A';
+    public static Optional<String> parseCoordinate(String input) {
+        Matcher m = COORDINATE_PATTERN.matcher(input);
+
+        if (m.matches()) {
+            return Optional.of(m.group(1));
+        }
+
+        return Optional.empty();
+    }
+
+    public static Optional<String[]> parseCoordinatePair(String input) {
+        Matcher m = COORDINATE_PAIR_PATTERN.matcher(input);
+
+        if (m.matches()) {
+            return Optional.of(new String[] { m.group(1), m.group(2) });
+        }
+
+        return Optional.empty();
+    }
+
+    public static int charToBoardRow(final char letter) {
+        final int row = letter - (letter >= 'a' ? 'a' : 'A');
         return row < 0 || row >= MAX_ROWS ? -1 : row;
     }
 
-    public static char rowToLetter(final int row) {
+    public static char boardRowToLetter(final int row) {
         return row < 0 || row >= MAX_ROWS ? 0 : (char) ('A' + row);
+    }
+
+    public static int intToBoardCol(int value) {
+        return value <= 0 || value > MAX_COLS ? -1 : (value - 1);
     }
 
     public Board() {
@@ -35,7 +65,7 @@ public class Board {
 
         // Generating playing field here with row labeling
         for (int row = 0; row < MAX_ROWS; row++) {
-            System.out.print(rowToLetter(row));
+            System.out.print(boardRowToLetter(row));
             System.out.print(' ');
 
             for (int col = 0; col < MAX_COLS; col++) {

@@ -1,9 +1,6 @@
 package battleship;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 final public class Battleship {
 
@@ -19,24 +16,37 @@ final public class Battleship {
 
         while (true) {
             // Separating the letters and number
-            String[] ship = scanner.nextLine().split(" ");
+            Optional<String[]> coordinatePair = Board.parseCoordinatePair(scanner.nextLine());
 
-            if (rowNum(ship, 0) == rowNum(ship, 1) &&
-                    Math.abs(colNum(ship, 0) - colNum(ship, 1)) != type.getLength() - 1 ||
-                    colNum(ship, 0) == colNum(ship, 1) &&
-                            Math.abs(rowNum(ship, 0) - rowNum(ship, 1)) != type.getLength() - 1) {
+            if (coordinatePair.isEmpty()) {
+                System.out.println("Invalid input. Try again.");
+                continue;
+            }
+
+            final String[] coordinates = coordinatePair.get();
+            int[] rows = { rowNum(coordinates[0]), rowNum(coordinates[1]) };
+            int[] cols = { colNum(coordinates[0]), colNum(coordinates[1]) };
+
+            if (rows[0] < 0 || rows[1] < 0 || cols[0] < 0 || cols[1] < 0) {
+                System.out.println("Invalid location. Try again.");
+                continue;
+            }
+
+            int rowDiff = Math.abs(rows[1] - rows[0]);
+            int colDiff = Math.abs(cols[1] - cols[0]);
+
+            if (rowDiff == 0 && colDiff != type.getLength() - 1
+                || colDiff == 0 && rowDiff != type.getLength() - 1) {
                 System.out.printf("Error! Wrong length of the %s! Try again:%n", type.getName());
-            } else if (rowNum(ship, 0) != rowNum(ship, 1) &&
-                    colNum(ship, 0) != colNum(ship, 1)) {
+            } else if (rowDiff != 0 && colDiff != 0) {
                 System.out.println("Error! Wrong ship location! Try again:");
-            } else if (board.isFree(rowNum(ship, 0), colNum(ship, 0)) ||
-                    board.isFree(rowNum(ship, 1), colNum(ship, 1))) {
+            } else if (board.isFree(rows[0], cols[0]) || board.isFree(rows[1], cols[1])) {
                 System.out.println("Error! You placed it too close to another one. Try again:");
             } else {
-                type.setRowMin(rowNum(ship, 0));
-                type.setColMin(colNum(ship, 0));
-                type.setRowMax(rowNum(ship, 1));
-                type.setColMax(colNum(ship, 1));
+                type.setRowMin(rows[0]);
+                type.setColMin(cols[0]);
+                type.setRowMax(rows[1]);
+                type.setColMax(cols[1]);
                 board.placeShip(type);
                 System.out.println();
                 break;
@@ -44,14 +54,12 @@ final public class Battleship {
         }
     }
 
-    public int rowNum(String[] letters, int index) {
-        final String letter = letters[index].replaceAll("[0-9]", "");
-
-        return Board.letterToRow(letter.charAt(0));
+    public int rowNum(String coordinate) {
+        return Board.charToBoardRow(coordinate.charAt(0));
     }
 
-    public int colNum(String[] num, int index) {
-        return Integer.parseInt(num[index].replaceAll("[A-Z]", "")) - 1;
+    public int colNum(String coordinate) {
+        return Board.intToBoardCol(Integer.parseInt(coordinate, 1, coordinate.length(), 10));
     }
 
     public void gameplay() {
@@ -79,9 +87,20 @@ final public class Battleship {
         int oCounter = board.getO();
 
         while (oCounter != 0) {
-            String[] attackPos = scanner.nextLine().split(" ");
-            int row = rowNum(attackPos, 0);
-            int col = colNum(attackPos, 0);
+            Optional<String> coordinate = Board.parseCoordinate(scanner.nextLine());
+
+            if (coordinate.isEmpty()) {
+                System.out.println("Invalid input. Try again.");
+                continue;
+            }
+
+            int row = rowNum(coordinate.get());
+            int col = colNum(coordinate.get());
+
+            if (row < 0 || col < 0) {
+                System.out.println("Invalid location. Try again.");
+                continue;
+            }
 
             try {
                 if (board.isShip(row, col)) {
