@@ -7,12 +7,10 @@ import java.util.Scanner;
 final public class Battleship {
 
     final private Scanner scanner;
-    private int o;
 
     public Battleship() {
 
         this.scanner = new Scanner(System.in);
-        this.o = 0;
     }
 
     public void setShipType(Ship type, Board board) {
@@ -97,12 +95,12 @@ final public class Battleship {
             int col = colNum(attackPos, 0);
 
             try {
-                if (checkHit(board, row, col)) {
-                    hiddenBoard.setIndex(row, col, "X ");
-                    board.setIndex(row, col, "X ");
+                if (board.isHit(row, col)) {
+                    hiddenBoard.setIndex(row, col, 'X');
+                    board.setIndex(row, col, 'X');
                     hiddenBoard.printField();
                     for (Ship ship : ships) {
-                        board.isSunken(ship, board);
+                        board.isSunken(ship);
                     }
                     for (Ship type : ships) {
                         if (type.isSunken()) {
@@ -113,9 +111,9 @@ final public class Battleship {
                         }
                     }
                     oCounter--;
-                } else if (!checkHit(board, row, col)) {
-                    hiddenBoard.setIndex(row, col, "M ");
-                    board.setIndex(row, col, "M ");
+                } else if (!board.isHit(row, col)) {
+                    hiddenBoard.setIndex(row, col, 'M');
+                    board.setIndex(row, col, 'M');
                     hiddenBoard.printField();
                     System.out.println("You missed. Try again:");
                 }
@@ -124,10 +122,6 @@ final public class Battleship {
             }
         }
         System.out.println("You sank the last ship. You won. Congratulations!");
-    }
-
-    public boolean checkHit(Board board, int row, int col) {
-        return board.getIndex(row, col).contains("O");
     }
 
     public void start() {
