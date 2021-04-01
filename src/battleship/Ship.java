@@ -5,6 +5,7 @@ package battleship;
     final private String name;
     final private int length;
     private boolean horizontal;
+    private boolean sunken;
     private int rowMin;
     private int colMin;
     private int rowMax;
@@ -14,6 +15,7 @@ package battleship;
         this.name = name;
         this.length = length;
         this.horizontal = false;
+        this.sunken = false;
         this.rowMin = 0;
         this.colMin = 0;
         this.rowMax = 0;
@@ -66,5 +68,13 @@ package battleship;
 
      public boolean isHorizontal() {
          return this.horizontal;
+     }
+
+     public void setStatus(boolean status) {
+        this.sunken = status;
+     }
+
+     public boolean isSunken() {
+         return sunken;
      }
  }
