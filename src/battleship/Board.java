@@ -26,27 +26,21 @@ public class Board {
         }
     }
 
-
     public void printField() {
-        for (int y = 0; y <= field[0].length; y++) {
-            if (y == 0) {
-                System.out.print("  ");
-            } else {
-                System.out.print(y + " ");
-            }
+        for (int colNumber = 1; colNumber <= MAX_COLS; colNumber++) {
+            System.out.print(colNumber < 10 ? "  " : " ");
+            System.out.print(colNumber);
         }
-        // Generating playing field here with row labeling
-        for (int row = 0; row < field.length; row++) {
-            if (row == 0) {
-                System.out.println("  ");
-            }
+        System.out.println();
 
+        // Generating playing field here with row labeling
+        for (int row = 0; row < MAX_ROWS; row++) {
             System.out.print(rowToLetter(row));
             System.out.print(' ');
 
-            for (int col = 0; col < field[row].length; col++) {
+            for (int col = 0; col < MAX_COLS; col++) {
                 System.out.print(field[row][col]);
-                System.out.print(' ');
+                System.out.print("  ");
             }
             System.out.println();
         }
