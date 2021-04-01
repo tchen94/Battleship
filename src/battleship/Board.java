@@ -73,6 +73,14 @@ public class Board {
         return field[row][col] == 'X';
     }
 
+    public boolean isMiss(int row, int col) {
+        return field[row][col] == 'M';
+    }
+
+    public boolean isEmpty(int row, int col) {
+        return field[row][col] == '~';
+    }
+
     public boolean isFree(int row, int col) {
         final int rMin = Math.max(row - 1, 0);
         final int rMax = Math.min(row + 1, MAX_ROWS);
