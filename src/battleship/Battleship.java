@@ -84,27 +84,36 @@ final public class Battleship {
             int col = colNum(attackPos, 0);
 
             try {
-                if (board.isHit(row, col)) {
+                if (board.isShip(row, col)) {
                     hiddenBoard.setIndex(row, col, 'X');
                     board.setIndex(row, col, 'X');
                     hiddenBoard.printField();
                     for (Ship ship : ships) {
                         board.isSunken(ship);
                     }
+                    boolean sank = false;
                     for (Ship type : ships) {
                         if (type.isSunken()) {
-                            System.out.println("You sank a ship! Specify a new target:");
+                            sank = true;
                             ships.remove(type);
-                        } else {
-                            System.out.println("You hit a ship! Try again:");
+                            break;
                         }
                     }
+                    if (sank) {
+                        System.out.println("You sank a ship! Specify a new target:");
+                    } else {
+                        System.out.println("You hit a ship! Try again:");
+                    }
                     oCounter--;
-                } else if (!board.isHit(row, col)) {
+                } else if (board.isEmpty(row, col)) {
                     hiddenBoard.setIndex(row, col, 'M');
                     board.setIndex(row, col, 'M');
                     hiddenBoard.printField();
                     System.out.println("You missed. Try again:");
+                } else if (board.isHit(row, col)) {
+                    System.out.println("You already hit this one. Try again:");
+                } else if (board.isMiss(row, col)) {
+                    System.out.println("You already missed this one. Try again:");
                 }
             } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
                 System.out.println("Error! You entered the wrong coordinates! Try again:");
