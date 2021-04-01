@@ -1,6 +1,7 @@
 package battleship;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 final public class Battleship {
@@ -54,58 +55,80 @@ final public class Battleship {
         return Integer.parseInt(num[index].replaceAll("[A-Z]", "")) - 1;
     }
 
-    public void startBoard() {
+    public void gameplay() {
         Board board = new Board();
-        Board hidden = new Board();
+        Board hiddenBoard = new Board();
+        List<Ship> ships = new ArrayList<>();
         Ship aircraft = new Ship(5, "Aircraft Carrier");
         Ship battleship = new Ship(4, "Battleship");
         Ship submarine = new Ship(3, "Submarine");
         Ship cruiser = new Ship(3, "Cruiser");
         Ship destroyer = new Ship(2, "Destroyer");
 
+        ships.add(aircraft);
+        ships.add(battleship);
+        ships.add(submarine);
+        ships.add(cruiser);
+        ships.add(destroyer);
+
         board.printField();
         setShipType(aircraft, board);
         board.printField();
-        setShipType(battleship, board);
-        board.printField();
-        setShipType(submarine, board);
-        board.printField();
-        setShipType(cruiser, board);
-        board.printField();
+//        setShipType(battleship, board);
+//        board.printField();
+//        setShipType(submarine, board);
+//        board.printField();
+//        setShipType(cruiser, board);
+//        board.printField();
         setShipType(destroyer, board);
         board.printField();
+        board.totalShips();
+
+        System.out.println("The game starts!");
+        hiddenBoard.printField();
+        System.out.println("Take a shot!");
+        int oCounter = board.getO();
+
+        while (oCounter != 0) {
+            String[] attackPos = scanner.nextLine().split(" ");
+            int row = rowNum(attackPos, 0);
+            int col = colNum(attackPos, 0);
+
+            try {
+                if (checkHit(board, row, col)) {
+                    hiddenBoard.setIndex(row, col, "X ");
+                    board.setIndex(row, col, "X ");
+                    hiddenBoard.printField();
+                    for (Ship ship : ships) {
+                        board.isSunken(ship, board);
+                    }
+                    for (Ship type : ships) {
+                        if (type.isSunken()) {
+                            System.out.println("You sank a ship! Specify a new target:");
+                            ships.remove(type);
+                        } else {
+                            System.out.println("You hit a ship! Try again:");
+                        }
+                    }
+                    oCounter--;
+                } else if (!checkHit(board, row, col)) {
+                    hiddenBoard.setIndex(row, col, "M ");
+                    board.setIndex(row, col, "M ");
+                    hiddenBoard.printField();
+                    System.out.println("You missed. Try again:");
+                }
+            } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+                System.out.println("Error! You entered the wrong coordinates! Try again:");
+            }
+        }
+        System.out.println("You sank the last ship. You won. Congratulations!");
     }
 
-//    public void gameplay() {
-//        System.out.println("The game starts!");
-//        printField(hiddenField);
-//        System.out.println("Take a shot!");
-//        while (true) {
-//            String[] attackPos = scanner.nextLine().split(" ");
-//            try {
-//                if (field[rowLetter(attackPos, 0)][colNum(attackPos, 0)].contains("O")) {
-//                    hiddenField[rowLetter(attackPos, 0)][colNum(attackPos, 0)] = "X ";
-//                    field[rowLetter(attackPos, 0)][colNum(attackPos, 0)] = "X ";
-//                    printField(hiddenField);
-//                    System.out.println("You hit a ship!");
-//                    printField(field);
-//                    break;
-//                } else if (field[rowLetter(attackPos, 0)][colNum(attackPos, 0)].contains("~")) {
-//                    hiddenField[rowLetter(attackPos, 0)][colNum(attackPos, 0)] = "M ";
-//                    field[rowLetter(attackPos, 0)][colNum(attackPos, 0)] = "M ";
-//                    printField(hiddenField);
-//                    System.out.println("You missed!");
-//                    printField(field);
-//                    break;
-//                }
-//            } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-//                System.out.println("Error! You entered the wrong coordinates! Try again:");
-//            }
-//        }
-//    }
+    public boolean checkHit(Board board, int row, int col) {
+        return board.getIndex(row, col).contains("O");
+    }
 
     public void start() {
-        startBoard();
-//        gameplay();
+        gameplay();
     }
 }
