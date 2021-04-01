@@ -8,7 +8,6 @@ public class Board {
 
     final private char[][] field;
     private int o;
-    private int damaged;
 
     public static int letterToRow(final char letter) {
         final int row = letter - 'A';
@@ -21,8 +20,6 @@ public class Board {
 
     public Board() {
         this.field = new char[MAX_ROWS][MAX_COLS];
-        this.o = 0;
-        this.damaged = 0;
 
         for (char[] row : field) {
             Arrays.fill(row, '~');
@@ -113,20 +110,23 @@ public class Board {
     }
 
     public void isSunken(Ship type) {
-        if (type.isHorizontal()) {
-            for (int col = type.getFirstCol(); col <= type.getSecondCol(); col++) {
-                if (isHit(type.getFirstRow(), col)) {
-                    damaged++;
-                }
-            }
-        } else {
-            for (int row = type.getFirstRow(); row <= type.getSecondRow(); row++) {
-                if (isHit(row, type.getFirstCol())) {
-                    damaged++;
+        final int rMin = Math.min(type.getFirstRow(), type.getSecondRow());
+        final int rMax = Math.max(type.getFirstRow(), type.getSecondRow());
+
+        final int cMin = Math.min(type.getFirstCol(), type.getSecondCol());
+        final int cMax = Math.min(type.getFirstCol(), type.getSecondCol());
+
+        boolean sunk = true;
+
+        for (int r = rMin; r <= rMax; r++) {
+            for (int c = cMin; c <= cMax; c++) {
+                if (!isHit(r, c)) {
+                    sunk = false;
                 }
             }
         }
-        type.setStatus(damaged == type.getLength());
+
+        type.setStatus(sunk);
     }
 
     public void setIndex(int row, int col, char status) {

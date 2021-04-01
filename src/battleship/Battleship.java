@@ -1,6 +1,7 @@
 package battleship;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -36,7 +37,6 @@ final public class Battleship {
                 type.setColMin(colNum(ship, 0));
                 type.setRowMax(rowNum(ship, 1));
                 type.setColMax(colNum(ship, 1));
-                type.setHorizontal();
                 board.placeShip(type);
                 System.out.println();
                 break;
@@ -51,36 +51,25 @@ final public class Battleship {
     }
 
     public int colNum(String[] num, int index) {
-
         return Integer.parseInt(num[index].replaceAll("[A-Z]", "")) - 1;
     }
 
     public void gameplay() {
         Board board = new Board();
         Board hiddenBoard = new Board();
-        List<Ship> ships = new ArrayList<>();
-        Ship aircraft = new Ship(5, "Aircraft Carrier");
-        Ship battleship = new Ship(4, "Battleship");
-        Ship submarine = new Ship(3, "Submarine");
-        Ship cruiser = new Ship(3, "Cruiser");
-        Ship destroyer = new Ship(2, "Destroyer");
+        List<Ship> ships = new ArrayList<>(Arrays.asList(
+            new Ship(5, "Aircraft Carrier"),
+            // new Ship(4, "Battleship"),
+            // new Ship(3, "Submarine"),
+            // new Ship(3, "Cruiser"),
+            new Ship(2, "Destroyer")
+        ));
 
-        ships.add(aircraft);
-        ships.add(battleship);
-        ships.add(submarine);
-        ships.add(cruiser);
-        ships.add(destroyer);
+        for (final Ship ship : ships) {
+            board.printField();
+            setShipType(ship, board);
+        }
 
-        board.printField();
-        setShipType(aircraft, board);
-        board.printField();
-//        setShipType(battleship, board);
-//        board.printField();
-//        setShipType(submarine, board);
-//        board.printField();
-//        setShipType(cruiser, board);
-//        board.printField();
-        setShipType(destroyer, board);
         board.printField();
         board.totalShips();
 

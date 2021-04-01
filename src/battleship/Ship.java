@@ -4,7 +4,6 @@ package battleship;
 
     final private String name;
     final private int length;
-    private boolean horizontal;
     private boolean sunken;
     private int rowMin;
     private int colMin;
@@ -14,12 +13,6 @@ package battleship;
     public Ship(int length, String name) {
         this.name = name;
         this.length = length;
-        this.horizontal = false;
-        this.sunken = false;
-        this.rowMin = 0;
-        this.colMin = 0;
-        this.rowMax = 0;
-        this.colMax = 0;
     }
 
      public String getName() {
@@ -62,12 +55,8 @@ package battleship;
          return colMax;
      }
 
-     public void setHorizontal() {
-        this.horizontal = rowMin == rowMax;
-     }
-
      public boolean isHorizontal() {
-         return this.horizontal;
+        return rowMin == rowMax;
      }
 
      public void setStatus(boolean status) {
