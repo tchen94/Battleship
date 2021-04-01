@@ -131,4 +131,9 @@ final public class Battleship {
     public void start() {
         gameplay();
     }
+
+    public static void main(String[] args) {
+        Battleship game = new Battleship();
+        game.start();
+    }
 }
