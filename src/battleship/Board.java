@@ -3,15 +3,24 @@ package battleship;
 import java.util.Arrays;
 
 public class Board {
+    public static final int MAX_ROWS = 10;
+    public static final int MAX_COLS = 10;
 
-    final private RowLetter[] letters;
     final private String[][] field;
     private int o;
     private int damaged;
 
+    public static int letterToRow(final char letter) {
+        final int row = letter - 'A';
+        return row < 0 || row >= MAX_ROWS ? -1 : row;
+    }
+
+    public static char rowToLetter(final int row) {
+        return row < 0 || row >= MAX_ROWS ? 0 : (char) ('A' + row);
+    }
+
     public Board() {
-        this.letters = RowLetter.values();
-        this.field = new String[10][10];
+        this.field = new String[MAX_ROWS][MAX_COLS];
         this.o = 0;
         this.damaged = 0;
 
@@ -19,6 +28,8 @@ public class Board {
             Arrays.fill(strings, "~ ");
         }
     }
+
+
     public void printField() {
         for (int y = 0; y <= field[0].length; y++) {
             if (y == 0) {
@@ -32,7 +43,10 @@ public class Board {
             if (row == 0) {
                 System.out.println("  ");
             }
-            System.out.print(letters[row] + " ");
+
+            System.out.print(rowToLetter(row));
+            System.out.print(' ');
+
             for (int col = 0; col < field[row].length; col++) {
                 System.out.print(field[row][col]);
             }

@@ -46,8 +46,10 @@ final public class Battleship {
         }
     }
 
-    public int rowNum(String[] letter, int index) {
-        return RowLetter.valueOf(letter[index].replaceAll("[0-9]", "")).ordinal();
+    public int rowNum(String[] letters, int index) {
+        final String letter = letters[index].replaceAll("[0-9]", "");
+
+        return Board.letterToRow(letter.charAt(0));
     }
 
     public int colNum(String[] num, int index) {
