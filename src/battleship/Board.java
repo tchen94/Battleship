@@ -6,7 +6,7 @@ public class Board {
     public static final int MAX_ROWS = 10;
     public static final int MAX_COLS = 10;
 
-    final private String[][] field;
+    final private char[][] field;
     private int o;
     private int damaged;
 
@@ -20,12 +20,12 @@ public class Board {
     }
 
     public Board() {
-        this.field = new String[MAX_ROWS][MAX_COLS];
+        this.field = new char[MAX_ROWS][MAX_COLS];
         this.o = 0;
         this.damaged = 0;
 
-        for (String[] strings : field) {
-            Arrays.fill(strings, "~ ");
+        for (char[] row : field) {
+            Arrays.fill(row, '~');
         }
     }
 
@@ -49,6 +49,7 @@ public class Board {
 
             for (int col = 0; col < field[row].length; col++) {
                 System.out.print(field[row][col]);
+                System.out.print(' ');
             }
             System.out.println();
         }
@@ -64,53 +65,63 @@ public class Board {
 
         if (isHorizontal) {
             for (int col = smallestCol; col <= largestCol; col++) {
-                field[type.getFirstRow()][col] = "O ";
+                field[type.getFirstRow()][col] = 'O';
             }
         } else {
             for (int row = smallestRow; row <= largestRow; row++) {
-                field[row][type.getFirstCol()] = "O ";
+                field[row][type.getFirstCol()] = 'O';
             }
         }
     }
 
+    public boolean isShip(int row, int col) {
+        return field[row][col] == 'O';
+    }
+
+    public boolean isHit(int row, int col) {
+        return field[row][col] == 'X';
+    }
+
     public boolean isFree(int row, int col) {
-        try {
-            if (field[row - 1][col - 1].contains("O") || field[row - 1][col].contains("O") ||
-                    field[row - 1][col + 1].contains("O")) {
-                return true;
+        final int rMin = Math.max(row - 1, 0);
+        final int rMax = Math.min(row + 1, MAX_ROWS);
+
+        final int cMin = Math.max(col - 1, 0);
+        final int cMax = Math.min(col + 1, MAX_COLS);
+
+        for (int r = rMin; r <= rMax; r++) {
+            for (int c = cMin; c <= cMax; c++) {
+                if (isShip(r, c)) {
+                    return true;
+                }
             }
-            if (field[row][col + 1].contains("O") || field[row][col - 1].contains("O")) {
-                return true;
-            }
-            if (field[row + 1][col - 1].contains("O") || field[row + 1][col].contains("O") ||
-                    field[row + 1][col + 1].contains("O")) {
-                return true;
-            }
-        } catch (IndexOutOfBoundsException ignored) {
         }
+
         return false;
     }
 
     public void totalShips() {
         int count = 0;
-        for (String[] strings : field) {
-            for (String string : strings) {
-                this.o = string.contains("O") ? count++ : count;
+        for (char[] row : field) {
+            for (char c : row) {
+                if (c == 'O') {
+                    count++;
+                }
             }
         }
         this.o = count;
     }
 
-    public void isSunken(Ship type, Board board) {
+    public void isSunken(Ship type) {
         if (type.isHorizontal()) {
             for (int col = type.getFirstCol(); col <= type.getSecondCol(); col++) {
-                if (board.getIndex(type.getFirstRow(), col).contains("X")) {
+                if (isHit(type.getFirstRow(), col)) {
                     damaged++;
                 }
             }
         } else {
             for (int row = type.getFirstRow(); row <= type.getSecondRow(); row++) {
-                if (board.getIndex(row, type.getFirstCol()).contains("X")) {
+                if (isHit(row, type.getFirstCol())) {
                     damaged++;
                 }
             }
@@ -118,12 +129,8 @@ public class Board {
         type.setStatus(damaged == type.getLength());
     }
 
-    public void setIndex(int row, int col, String status) {
+    public void setIndex(int row, int col, char status) {
         field[row][col] = status;
-    }
-
-    public String getIndex(int row, int col) {
-        return field[row][col];
     }
 
     public int getO() {
