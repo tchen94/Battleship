@@ -6,10 +6,14 @@ public class Board {
 
     final private RowLetter[] letters;
     final private String[][] field;
+    private int o;
+    private int damaged;
 
     public Board() {
         this.letters = RowLetter.values();
         this.field = new String[10][10];
+        this.o = 0;
+        this.damaged = 0;
 
         for (String[] strings : field) {
             Arrays.fill(strings, "~ ");
@@ -71,5 +75,44 @@ public class Board {
         } catch (IndexOutOfBoundsException ignored) {
         }
         return false;
+    }
+
+    public void totalShips() {
+        int count = 0;
+        for (String[] strings : field) {
+            for (String string : strings) {
+                this.o = string.contains("O") ? count++ : count;
+            }
+        }
+        this.o = count;
+    }
+
+    public void isSunken(Ship type, Board board) {
+        if (type.isHorizontal()) {
+            for (int col = type.getFirstCol(); col <= type.getSecondCol(); col++) {
+                if (board.getIndex(type.getFirstRow(), col).contains("X")) {
+                    damaged++;
+                }
+            }
+        } else {
+            for (int row = type.getFirstRow(); row <= type.getSecondRow(); row++) {
+                if (board.getIndex(row, type.getFirstCol()).contains("X")) {
+                    damaged++;
+                }
+            }
+        }
+        type.setStatus(damaged == type.getLength());
+    }
+
+    public void setIndex(int row, int col, String status) {
+        field[row][col] = status;
+    }
+
+    public String getIndex(int row, int col) {
+        return field[row][col];
+    }
+
+    public int getO() {
+        return o;
     }
 }
