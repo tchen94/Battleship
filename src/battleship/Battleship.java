@@ -67,9 +67,9 @@ final public class Battleship {
         Board hiddenBoard = new Board();
         List<Ship> ships = new ArrayList<>(Arrays.asList(
             new Ship(5, "Aircraft Carrier"),
-            // new Ship(4, "Battleship"),
-            // new Ship(3, "Submarine"),
-            // new Ship(3, "Cruiser"),
+             new Ship(4, "Battleship"),
+             new Ship(3, "Submarine"),
+             new Ship(3, "Cruiser"),
             new Ship(2, "Destroyer")
         ));
 
@@ -130,8 +130,10 @@ final public class Battleship {
                     hiddenBoard.printField();
                     System.out.println("You missed. Try again:");
                 } else if (board.isHit(row, col)) {
+                    hiddenBoard.printField();
                     System.out.println("You already hit this one. Try again:");
                 } else if (board.isMiss(row, col)) {
+                    hiddenBoard.printField();
                     System.out.println("You already missed this one. Try again:");
                 }
             } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
