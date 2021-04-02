@@ -58,7 +58,7 @@ public class Board {
 
     public void printField() {
         for (int colNumber = 1; colNumber <= MAX_COLS; colNumber++) {
-            System.out.print(colNumber < 10 ? "  " : " ");
+            System.out.print(colNumber == 1 ? "  " : " ");
             System.out.print(colNumber);
         }
         System.out.println();
@@ -70,7 +70,7 @@ public class Board {
 
             for (int col = 0; col < MAX_COLS; col++) {
                 System.out.print(field[row][col]);
-                System.out.print("  ");
+                System.out.print(" ");
             }
             System.out.println();
         }
@@ -112,19 +112,21 @@ public class Board {
     }
 
     public boolean isFree(int row, int col) {
-        final int rMin = Math.max(row - 1, 0);
-        final int rMax = Math.min(row + 1, MAX_ROWS);
+        try {
+            final int rMin = Math.max(row - 1, 0);
+            final int rMax = Math.min(row + 1, MAX_ROWS);
 
-        final int cMin = Math.max(col - 1, 0);
-        final int cMax = Math.min(col + 1, MAX_COLS);
+            final int cMin = Math.max(col - 1, 0);
+            final int cMax = Math.min(col + 1, MAX_COLS);
 
-        for (int r = rMin; r <= rMax; r++) {
-            for (int c = cMin; c <= cMax; c++) {
-                if (isShip(r, c)) {
-                    return true;
+            for (int r = rMin; r <= rMax; r++) {
+                for (int c = cMin; c <= cMax; c++) {
+                    if (isShip(r, c)) {
+                        return true;
+                    }
                 }
             }
-        }
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
 
         return false;
     }
