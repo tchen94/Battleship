@@ -1,40 +1,76 @@
 package battleship;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Board {
+    public static final int MAX_ROWS = 10;
+    public static final int MAX_COLS = 10;
 
-    final private RowLetter[] letters;
-    final private String[][] field;
+    public static final Pattern COORDINATE_PATTERN = Pattern.compile(" *([A-Za-z][1-9][0-9]*) *");
+    public static final Pattern COORDINATE_PAIR_PATTERN = Pattern.compile(" *([A-Za-z][1-9][0-9]*) *([A-Za-z][1-9][0-9]*) *");
+
+    final private char[][] field;
     private int o;
-    private int damaged;
+
+    public static Optional<String> parseCoordinate(String input) {
+        Matcher m = COORDINATE_PATTERN.matcher(input);
+
+        if (m.matches()) {
+            return Optional.of(m.group(1));
+        }
+
+        return Optional.empty();
+    }
+
+    public static Optional<String[]> parseCoordinatePair(String input) {
+        Matcher m = COORDINATE_PAIR_PATTERN.matcher(input);
+
+        if (m.matches()) {
+            return Optional.of(new String[] { m.group(1), m.group(2) });
+        }
+
+        return Optional.empty();
+    }
+
+    public static int charToBoardRow(final char letter) {
+        final int row = letter - (letter >= 'a' ? 'a' : 'A');
+        return row < 0 || row >= MAX_ROWS ? -1 : row;
+    }
+
+    public static char boardRowToLetter(final int row) {
+        return row < 0 || row >= MAX_ROWS ? 0 : (char) ('A' + row);
+    }
+
+    public static int intToBoardCol(int value) {
+        return value <= 0 || value > MAX_COLS ? -1 : (value - 1);
+    }
 
     public Board() {
-        this.letters = RowLetter.values();
-        this.field = new String[10][10];
-        this.o = 0;
-        this.damaged = 0;
+        this.field = new char[MAX_ROWS][MAX_COLS];
 
-        for (String[] strings : field) {
-            Arrays.fill(strings, "~ ");
+        for (char[] row : field) {
+            Arrays.fill(row, '~');
         }
     }
+
     public void printField() {
-        for (int y = 0; y <= field[0].length; y++) {
-            if (y == 0) {
-                System.out.print("  ");
-            } else {
-                System.out.print(y + " ");
-            }
+        for (int colNumber = 1; colNumber <= MAX_COLS; colNumber++) {
+            System.out.print(colNumber < 10 ? "  " : " ");
+            System.out.print(colNumber);
         }
+        System.out.println();
+
         // Generating playing field here with row labeling
-        for (int row = 0; row < field.length; row++) {
-            if (row == 0) {
-                System.out.println("  ");
-            }
-            System.out.print(letters[row] + " ");
-            for (int col = 0; col < field[row].length; col++) {
+        for (int row = 0; row < MAX_ROWS; row++) {
+            System.out.print(boardRowToLetter(row));
+            System.out.print(' ');
+
+            for (int col = 0; col < MAX_COLS; col++) {
                 System.out.print(field[row][col]);
+                System.out.print("  ");
             }
             System.out.println();
         }
@@ -50,66 +86,83 @@ public class Board {
 
         if (isHorizontal) {
             for (int col = smallestCol; col <= largestCol; col++) {
-                field[type.getFirstRow()][col] = "O ";
+                field[type.getFirstRow()][col] = 'O';
             }
         } else {
             for (int row = smallestRow; row <= largestRow; row++) {
-                field[row][type.getFirstCol()] = "O ";
+                field[row][type.getFirstCol()] = 'O';
             }
         }
     }
 
+    public boolean isShip(int row, int col) {
+        return field[row][col] == 'O';
+    }
+
+    public boolean isHit(int row, int col) {
+        return field[row][col] == 'X';
+    }
+
+    public boolean isMiss(int row, int col) {
+        return field[row][col] == 'M';
+    }
+
+    public boolean isEmpty(int row, int col) {
+        return field[row][col] == '~';
+    }
+
     public boolean isFree(int row, int col) {
-        try {
-            if (field[row - 1][col - 1].contains("O") || field[row - 1][col].contains("O") ||
-                    field[row - 1][col + 1].contains("O")) {
-                return true;
+        final int rMin = Math.max(row - 1, 0);
+        final int rMax = Math.min(row + 1, MAX_ROWS);
+
+        final int cMin = Math.max(col - 1, 0);
+        final int cMax = Math.min(col + 1, MAX_COLS);
+
+        for (int r = rMin; r <= rMax; r++) {
+            for (int c = cMin; c <= cMax; c++) {
+                if (isShip(r, c)) {
+                    return true;
+                }
             }
-            if (field[row][col + 1].contains("O") || field[row][col - 1].contains("O")) {
-                return true;
-            }
-            if (field[row + 1][col - 1].contains("O") || field[row + 1][col].contains("O") ||
-                    field[row + 1][col + 1].contains("O")) {
-                return true;
-            }
-        } catch (IndexOutOfBoundsException ignored) {
         }
+
         return false;
     }
 
     public void totalShips() {
         int count = 0;
-        for (String[] strings : field) {
-            for (String string : strings) {
-                this.o = string.contains("O") ? count++ : count;
+        for (char[] row : field) {
+            for (char c : row) {
+                if (c == 'O') {
+                    count++;
+                }
             }
         }
         this.o = count;
     }
 
-    public void isSunken(Ship type, Board board) {
-        if (type.isHorizontal()) {
-            for (int col = type.getFirstCol(); col <= type.getSecondCol(); col++) {
-                if (board.getIndex(type.getFirstRow(), col).contains("X")) {
-                    damaged++;
-                }
-            }
-        } else {
-            for (int row = type.getFirstRow(); row <= type.getSecondRow(); row++) {
-                if (board.getIndex(row, type.getFirstCol()).contains("X")) {
-                    damaged++;
+    public void isSunken(Ship type) {
+        final int rMin = Math.min(type.getFirstRow(), type.getSecondRow());
+        final int rMax = Math.max(type.getFirstRow(), type.getSecondRow());
+
+        final int cMin = Math.min(type.getFirstCol(), type.getSecondCol());
+        final int cMax = Math.min(type.getFirstCol(), type.getSecondCol());
+
+        boolean sunk = true;
+
+        for (int r = rMin; r <= rMax; r++) {
+            for (int c = cMin; c <= cMax; c++) {
+                if (!isHit(r, c)) {
+                    sunk = false;
                 }
             }
         }
-        type.setStatus(damaged == type.getLength());
+
+        type.setStatus(sunk);
     }
 
-    public void setIndex(int row, int col, String status) {
+    public void setIndex(int row, int col, char status) {
         field[row][col] = status;
-    }
-
-    public String getIndex(int row, int col) {
-        return field[row][col];
     }
 
     public int getO() {

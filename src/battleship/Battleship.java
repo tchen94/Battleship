@@ -1,18 +1,14 @@
 package battleship;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 final public class Battleship {
 
     final private Scanner scanner;
-    private int o;
 
     public Battleship() {
 
         this.scanner = new Scanner(System.in);
-        this.o = 0;
     }
 
     public void setShipType(Ship type, Board board) {
@@ -20,25 +16,37 @@ final public class Battleship {
 
         while (true) {
             // Separating the letters and number
-            String[] ship = scanner.nextLine().split(" ");
+            Optional<String[]> coordinatePair = Board.parseCoordinatePair(scanner.nextLine());
 
-            if (rowNum(ship, 0) == rowNum(ship, 1) &&
-                    Math.abs(colNum(ship, 0) - colNum(ship, 1)) != type.getLength() - 1 ||
-                    colNum(ship, 0) == colNum(ship, 1) &&
-                            Math.abs(rowNum(ship, 0) - rowNum(ship, 1)) != type.getLength() - 1) {
+            if (coordinatePair.isEmpty()) {
+                System.out.println("Invalid input. Try again.");
+                continue;
+            }
+
+            final String[] coordinates = coordinatePair.get();
+            int[] rows = { rowNum(coordinates[0]), rowNum(coordinates[1]) };
+            int[] cols = { colNum(coordinates[0]), colNum(coordinates[1]) };
+
+            if (rows[0] < 0 || rows[1] < 0 || cols[0] < 0 || cols[1] < 0) {
+                System.out.println("Invalid location. Try again.");
+                continue;
+            }
+
+            int rowDiff = Math.abs(rows[1] - rows[0]);
+            int colDiff = Math.abs(cols[1] - cols[0]);
+
+            if (rowDiff == 0 && colDiff != type.getLength() - 1
+                || colDiff == 0 && rowDiff != type.getLength() - 1) {
                 System.out.printf("Error! Wrong length of the %s! Try again:%n", type.getName());
-            } else if (rowNum(ship, 0) != rowNum(ship, 1) &&
-                    colNum(ship, 0) != colNum(ship, 1)) {
+            } else if (rowDiff != 0 && colDiff != 0) {
                 System.out.println("Error! Wrong ship location! Try again:");
-            } else if (board.isFree(rowNum(ship, 0), colNum(ship, 0)) ||
-                    board.isFree(rowNum(ship, 1), colNum(ship, 1))) {
+            } else if (board.isFree(rows[0], cols[0]) || board.isFree(rows[1], cols[1])) {
                 System.out.println("Error! You placed it too close to another one. Try again:");
             } else {
-                type.setRowMin(rowNum(ship, 0));
-                type.setColMin(colNum(ship, 0));
-                type.setRowMax(rowNum(ship, 1));
-                type.setColMax(colNum(ship, 1));
-                type.setHorizontal();
+                type.setRowMin(rows[0]);
+                type.setColMin(cols[0]);
+                type.setRowMax(rows[1]);
+                type.setColMax(cols[1]);
                 board.placeShip(type);
                 System.out.println();
                 break;
@@ -46,41 +54,30 @@ final public class Battleship {
         }
     }
 
-    public int rowNum(String[] letter, int index) {
-        return RowLetter.valueOf(letter[index].replaceAll("[0-9]", "")).ordinal();
+    public int rowNum(String coordinate) {
+        return Board.charToBoardRow(coordinate.charAt(0));
     }
 
-    public int colNum(String[] num, int index) {
-
-        return Integer.parseInt(num[index].replaceAll("[A-Z]", "")) - 1;
+    public int colNum(String coordinate) {
+        return Board.intToBoardCol(Integer.parseInt(coordinate, 1, coordinate.length(), 10));
     }
 
     public void gameplay() {
         Board board = new Board();
         Board hiddenBoard = new Board();
-        List<Ship> ships = new ArrayList<>();
-        Ship aircraft = new Ship(5, "Aircraft Carrier");
-        Ship battleship = new Ship(4, "Battleship");
-        Ship submarine = new Ship(3, "Submarine");
-        Ship cruiser = new Ship(3, "Cruiser");
-        Ship destroyer = new Ship(2, "Destroyer");
+        List<Ship> ships = new ArrayList<>(Arrays.asList(
+            new Ship(5, "Aircraft Carrier"),
+            // new Ship(4, "Battleship"),
+            // new Ship(3, "Submarine"),
+            // new Ship(3, "Cruiser"),
+            new Ship(2, "Destroyer")
+        ));
 
-        ships.add(aircraft);
-        ships.add(battleship);
-        ships.add(submarine);
-        ships.add(cruiser);
-        ships.add(destroyer);
+        for (final Ship ship : ships) {
+            board.printField();
+            setShipType(ship, board);
+        }
 
-        board.printField();
-        setShipType(aircraft, board);
-        board.printField();
-//        setShipType(battleship, board);
-//        board.printField();
-//        setShipType(submarine, board);
-//        board.printField();
-//        setShipType(cruiser, board);
-//        board.printField();
-        setShipType(destroyer, board);
         board.printField();
         board.totalShips();
 
@@ -90,32 +87,52 @@ final public class Battleship {
         int oCounter = board.getO();
 
         while (oCounter != 0) {
-            String[] attackPos = scanner.nextLine().split(" ");
-            int row = rowNum(attackPos, 0);
-            int col = colNum(attackPos, 0);
+            Optional<String> coordinate = Board.parseCoordinate(scanner.nextLine());
+
+            if (coordinate.isEmpty()) {
+                System.out.println("Invalid input. Try again.");
+                continue;
+            }
+
+            int row = rowNum(coordinate.get());
+            int col = colNum(coordinate.get());
+
+            if (row < 0 || col < 0) {
+                System.out.println("Invalid location. Try again.");
+                continue;
+            }
 
             try {
-                if (checkHit(board, row, col)) {
-                    hiddenBoard.setIndex(row, col, "X ");
-                    board.setIndex(row, col, "X ");
+                if (board.isShip(row, col)) {
+                    hiddenBoard.setIndex(row, col, 'X');
+                    board.setIndex(row, col, 'X');
                     hiddenBoard.printField();
                     for (Ship ship : ships) {
-                        board.isSunken(ship, board);
+                        board.isSunken(ship);
                     }
+                    boolean sank = false;
                     for (Ship type : ships) {
                         if (type.isSunken()) {
-                            System.out.println("You sank a ship! Specify a new target:");
+                            sank = true;
                             ships.remove(type);
-                        } else {
-                            System.out.println("You hit a ship! Try again:");
+                            break;
                         }
                     }
+                    if (sank) {
+                        System.out.println("You sank a ship! Specify a new target:");
+                    } else {
+                        System.out.println("You hit a ship! Try again:");
+                    }
                     oCounter--;
-                } else if (!checkHit(board, row, col)) {
-                    hiddenBoard.setIndex(row, col, "M ");
-                    board.setIndex(row, col, "M ");
+                } else if (board.isEmpty(row, col)) {
+                    hiddenBoard.setIndex(row, col, 'M');
+                    board.setIndex(row, col, 'M');
                     hiddenBoard.printField();
                     System.out.println("You missed. Try again:");
+                } else if (board.isHit(row, col)) {
+                    System.out.println("You already hit this one. Try again:");
+                } else if (board.isMiss(row, col)) {
+                    System.out.println("You already missed this one. Try again:");
                 }
             } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
                 System.out.println("Error! You entered the wrong coordinates! Try again:");
@@ -124,11 +141,12 @@ final public class Battleship {
         System.out.println("You sank the last ship. You won. Congratulations!");
     }
 
-    public boolean checkHit(Board board, int row, int col) {
-        return board.getIndex(row, col).contains("O");
-    }
-
     public void start() {
         gameplay();
+    }
+
+    public static void main(String[] args) {
+        Battleship game = new Battleship();
+        game.start();
     }
 }
