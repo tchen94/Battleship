@@ -80,10 +80,8 @@ final public class Battleship {
 
     public void gameplay() {
 
-            if (coordinate.isEmpty()) {
-                System.out.println("Invalid input. Try again.");
-                continue;
-            }
+        boolean playerOneWin = false;
+        boolean playerTwoWin = false;
 
             int row = rowNum(coordinate.get());
             int col = colNum(coordinate.get());
