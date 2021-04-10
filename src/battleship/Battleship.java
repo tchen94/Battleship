@@ -169,7 +169,25 @@ final public class Battleship {
     }
 
     public void start() {
-        gameplay();
+
+        setPlayerBoard(playerOneShips, playerOneField);
+        System.out.println("Press Enter and pass the move to another player");
+        String input = scanner.nextLine();
+
+        if (input.isEmpty()) {
+            System.out.println("Player 2, place your ships to the game field");
+            setPlayerBoard(playerTwoShips, playerTwoField);
+        }
+        System.out.println("Press Enter and pass the move to another player");
+        String secondInput = scanner.nextLine();
+
+        if (secondInput.isEmpty()) {
+            playerOneField.totalShips();
+            playerTwoField.totalShips();
+            playerOneShipsOnField = playerOneField.getO();
+            playerTwoShipsOnField = playerTwoField.getO();
+            gameplay();
+        }
     }
 
     public static void main(String[] args) {
