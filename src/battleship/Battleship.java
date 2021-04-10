@@ -79,31 +79,6 @@ final public class Battleship {
     }
 
     public void gameplay() {
-        Board board = new Board();
-        Board hiddenBoard = new Board();
-        List<Ship> ships = new ArrayList<>(Arrays.asList(
-            new Ship(5, "Aircraft Carrier"),
-             new Ship(4, "Battleship"),
-             new Ship(3, "Submarine"),
-             new Ship(3, "Cruiser"),
-            new Ship(2, "Destroyer")
-        ));
-
-        for (final Ship ship : ships) {
-            board.printField();
-            setShipType(ship, board);
-        }
-
-        board.printField();
-        board.totalShips();
-
-        System.out.println("The game starts!");
-        hiddenBoard.printField();
-        System.out.println("Take a shot!");
-        int oCounter = board.getO();
-
-        while (oCounter != 0) {
-            Optional<String> coordinate = Board.parseCoordinate(scanner.nextLine());
 
             if (coordinate.isEmpty()) {
                 System.out.println("Invalid input. Try again.");
