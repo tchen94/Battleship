@@ -141,6 +141,33 @@ final public class Battleship {
 //        System.out.println("You sank the last ship. You won. Congratulations!");
     }
 
+    public void setPlayerBoard(List<Ship> player, Board board) {
+        player = new ArrayList<>(Arrays.asList(
+                new Ship(5, "Aircraft Carrier"),
+                new Ship(4, "Battleship"),
+                new Ship(3, "Submarine"),
+                new Ship(3, "Cruiser"),
+                new Ship(2, "Destroyer")
+        ));
+
+        for (final Ship ship : player) {
+            board.printField();
+            setShipType(ship, board);
+        }
+    }
+
+    public void playerOne() {
+        playerTwoHidden.printField();
+        System.out.println("---------------------");
+        playerOneField.printField();
+    }
+
+    public void playerTwo() {
+        playerOneHidden.printField();
+        System.out.println("---------------------");
+        playerTwoField.printField();
+    }
+
     public void start() {
         gameplay();
     }
