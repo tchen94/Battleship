@@ -5,6 +5,14 @@ import java.util.*;
 final public class Battleship {
 
     final private Scanner scanner;
+    private List<Ship> playerOneShips;
+    private List<Ship> playerTwoShips;
+    private Board playerOneField;
+    private Board playerTwoField;
+    private Board playerOneHidden;
+    private Board playerTwoHidden;
+    private int playerOneShipsOnField;
+    private int playerTwoShipsOnField;
 
     public Battleship() {
 
