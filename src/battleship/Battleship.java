@@ -14,6 +14,7 @@ final public class Battleship {
     private Board playerTwoHidden = new Board();
     private int playerOneShipsOnField;
     private int playerTwoShipsOnField;
+    private int player = 1;
 
     public Battleship() {
 
