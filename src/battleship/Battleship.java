@@ -162,65 +162,15 @@ final public class Battleship {
 
     public void gameplay() {
 
-        boolean playerOneWin = false;
-        boolean playerTwoWin = false;
-
-//        while (playerOneWin != true || playerTwoWin != true) {
-//
-//            Optional<String> coordinate = Board.parseCoordinate(scanner.nextLine());
-//
-//            if (coordinate.isEmpty()) {
-//                System.out.println("Invalid input. Try again.");
-//                continue;
-//            }
-//
-//            int row = rowNum(coordinate.get());
-//            int col = colNum(coordinate.get());
-//
-//            if (row < 0 || col < 0) {
-//                System.out.println("Invalid location. Try again.");
-//                continue;
-//            }
-//
-//            try {
-//                if (board.isShip(row, col)) {
-//                    hiddenBoard.setIndex(row, col, 'X');
-//                    board.setIndex(row, col, 'X');
-//                    hiddenBoard.printField();
-//                    for (Ship ship : ships) {
-//                        board.isSunken(ship);
-//                    }
-//                    boolean sank = false;
-//                    for (Ship type : ships) {
-//                        if (type.isSunken()) {
-//                            sank = true;
-//                            ships.remove(type);
-//                            break;
-//                        }
-//                    }
-//                    if (sank) {
-//                        System.out.println("You sank a ship! Specify a new target:");
-//                    } else {
-//                        System.out.println("You hit a ship! Try again:");
-//                    }
-//                    oCounter--;
-//                } else if (board.isEmpty(row, col)) {
-//                    hiddenBoard.setIndex(row, col, 'M');
-//                    board.setIndex(row, col, 'M');
-//                    hiddenBoard.printField();
-//                    System.out.println("You missed. Try again:");
-//                } else if (board.isHit(row, col)) {
-//                    hiddenBoard.printField();
-//                    System.out.println("You already hit this one. Try again:");
-//                } else if (board.isMiss(row, col)) {
-//                    hiddenBoard.printField();
-//                    System.out.println("You already missed this one. Try again:");
-//                }
-//            } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
-//                System.out.println("Error! You entered the wrong coordinates! Try again:");
-//            }
-//        }
-//        System.out.println("You sank the last ship. You won. Congratulations!");
+        while (true) {
+            if (playerOneShipsOnField == 0) {
+                break;
+            } else if (playerTwoShipsOnField == 0) {
+                break;
+            }
+            playerTurn();
+        }
+        System.out.println("You sank the last ship. You won. Congratulations!");
     }
 
     public void setPlayerBoard(List<Ship> player, Board board) {
