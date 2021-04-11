@@ -130,7 +130,7 @@ public class Board {
         return false;
     }
 
-    public void totalShips() {
+    public int totalShips() {
         int count = 0;
         for (char[] row : field) {
             for (char c : row) {
@@ -139,7 +139,7 @@ public class Board {
                 }
             }
         }
-        this.o = count;
+        return count;
     }
 
     public void isSunken(Ship type) {
