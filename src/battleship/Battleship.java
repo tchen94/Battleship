@@ -72,6 +72,94 @@ final public class Battleship {
         return Board.intToBoardCol(Integer.parseInt(coordinate, 1, coordinate.length(), 10));
     }
 
+    public void playerMove(int player, List<Ship> playerShips, Board playerField, Board hiddenField) {
+        System.out.printf("Player %s, it's your turn:%n", player);
+
+        while (true) {
+            Optional<String> coordinate = Board.parseCoordinate(scanner.nextLine());
+
+            if (coordinate.isEmpty()) {
+                System.out.println("Invalid input. Try again.");
+                continue;
+            }
+
+            int row = rowNum(coordinate.get());
+            int col = colNum(coordinate.get());
+
+            if (row < 0 || col < 0) {
+                System.out.println("Invalid location. Try again.");
+                continue;
+            }
+
+            try {
+                if (playerField.isShip(row, col)) {
+                    hiddenField.setIndex(row, col, 'X');
+                    playerField.setIndex(row, col, 'X');
+                    if (player == 1) {
+                        playerTwoShipsOnField--;
+                    } else if (player == 2) {
+                        playerOneShipsOnField--;
+                    }
+                    for (Ship ship : playerShips) {
+                        playerField.isSunken(ship);
+                    }
+                    boolean sank = false;
+                    for (Ship type : playerShips) {
+                        if (type.isSunken()) {
+                            sank = true;
+                            playerShips.remove(type);
+                            break;
+                        }
+                    }
+                    if (sank) {
+                        System.out.println("You sank a ship!");
+                    } else {
+                        System.out.println("You hit a ship!");
+                    }
+                    break;
+                } else if (playerField.isEmpty(row, col)) {
+                    hiddenField.setIndex(row, col, 'M');
+                    playerField.setIndex(row, col, 'M');
+                    System.out.println("You missed!");
+                    break;
+                } else if (playerField.isHit(row, col)) {
+                    System.out.println("You already hit this one.");
+                    break;
+                } else if (playerField.isMiss(row, col)) {
+                    System.out.println("You already missed this one.");
+                    break;
+                }
+            } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
+                System.out.println("Error! You entered the wrong coordinates! Try again:");
+            }
+        }
+    }
+
+    public void playerTurn() {
+        switch (player) {
+            case 1:
+                playerOne();
+                playerMove(1, playerTwoShips, playerTwoField, playerTwoHidden);
+                player = 2;
+                enterKeyPrompt();
+
+            case 2:
+                playerTwo();
+                playerMove(2, playerOneShips, playerOneField, playerOneHidden);
+                player = 1;
+                enterKeyPrompt();
+        }
+    }
+
+    public void enterKeyPrompt() {
+        System.out.println("Press Enter and pass the move to another player");
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            System.out.println("Please press Enter to continue");
+        }
+    }
+
     public void gameplay() {
 
         boolean playerOneWin = false;
