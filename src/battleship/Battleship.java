@@ -1,5 +1,6 @@
 package battleship;
 
+import java.io.IOException;
 import java.util.*;
 
 final public class Battleship {
