@@ -173,8 +173,8 @@ final public class Battleship {
         System.out.println("You sank the last ship. You won. Congratulations!");
     }
 
-    public void setPlayerBoard(List<Ship> player, Board board) {
-        player = new ArrayList<>(Arrays.asList(
+    public void setPlayerBoard(final List<Ship> playerShips, final Board board) {
+        final List<Ship> ships = new ArrayList<>(Arrays.asList(
                 new Ship(5, "Aircraft Carrier"),
                 new Ship(4, "Battleship"),
                 new Ship(3, "Submarine"),
