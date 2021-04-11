@@ -166,7 +166,4 @@ public class Board {
         field[row][col] = status;
     }
 
-    public int getO() {
-        return o;
-    }
 }
