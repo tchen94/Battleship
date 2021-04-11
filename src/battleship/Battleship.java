@@ -6,12 +6,12 @@ import java.util.*;
 final public class Battleship {
 
     final private Scanner scanner;
-    private List<Ship> playerOneShips;
-    private List<Ship> playerTwoShips;
-    private Board playerOneField;
-    private Board playerTwoField;
-    private Board playerOneHidden;
-    private Board playerTwoHidden;
+    private List<Ship> playerOneShips = new ArrayList<>();
+    private List<Ship> playerTwoShips = new ArrayList<>();
+    private Board playerOneField = new Board();
+    private Board playerTwoField = new Board();
+    private Board playerOneHidden = new Board();
+    private Board playerTwoHidden = new Board();
     private int playerOneShipsOnField;
     private int playerTwoShipsOnField;
 
