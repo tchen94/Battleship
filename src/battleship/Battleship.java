@@ -19,14 +19,6 @@ final public class Battleship {
     public Battleship() {
 
         this.scanner = new Scanner(System.in);
-        this.playerOneShips = new ArrayList<>();
-        this.playerTwoShips = new ArrayList<>();
-        this.playerOneField = new Board();
-        this.playerTwoField = new Board();
-        this.playerOneHidden = new Board();
-        this.playerTwoHidden = new Board();
-        this.playerOneShipsOnField = 0;
-        this.playerTwoShipsOnField = 0;
     }
 
     public void setShipType(Ship type, Board board) {
