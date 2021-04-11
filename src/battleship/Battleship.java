@@ -203,25 +203,21 @@ final public class Battleship {
     }
 
     public void start() {
-
+        System.out.println("Player 1, place your ships to the game field");
+        System.out.println();
         setPlayerBoard(playerOneShips, playerOneField);
-        System.out.println("Press Enter and pass the move to another player");
-        String input = scanner.nextLine();
+        playerOneField.printField();
+        playerOneShipsOnField = playerOneField.totalShips();
+        enterKeyPrompt();
 
-        if (input.isEmpty()) {
-            System.out.println("Player 2, place your ships to the game field");
-            setPlayerBoard(playerTwoShips, playerTwoField);
-        }
-        System.out.println("Press Enter and pass the move to another player");
-        String secondInput = scanner.nextLine();
+        System.out.println("Player 2, place your ships to the game field");
+        System.out.println();
+        setPlayerBoard(playerTwoShips, playerTwoField);
+        playerTwoField.printField();
+        playerTwoShipsOnField = playerTwoField.totalShips();
+        enterKeyPrompt();
 
-        if (secondInput.isEmpty()) {
-            playerOneField.totalShips();
-            playerTwoField.totalShips();
-            playerOneShipsOnField = playerOneField.getO();
-            playerTwoShipsOnField = playerTwoField.getO();
-            gameplay();
-        }
+        gameplay();
     }
 
     public static void main(String[] args) {
