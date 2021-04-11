@@ -182,7 +182,9 @@ final public class Battleship {
                 new Ship(2, "Destroyer")
         ));
 
-        for (final Ship ship : player) {
+        playerShips.addAll(ships);
+
+        for (final Ship ship : ships) {
             board.printField();
             setShipType(ship, board);
         }
