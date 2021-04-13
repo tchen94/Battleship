@@ -103,14 +103,9 @@ final public class Battleship {
                     for (Ship ship : playerShips) {
                         playerField.isSunken(ship);
                     }
-                    boolean sank = false;
-                    for (Ship type : playerShips) {
-                        if (type.isSunken()) {
-                            sank = true;
-                            playerShips.remove(type);
-                            break;
-                        }
-                    }
+
+                    boolean sank = playerShips.removeIf(Ship::isSunken);
+
                     if (sank) {
                         System.out.println("You sank a ship!");
                     } else {
