@@ -143,12 +143,13 @@ public class Board {
         return count;
     }
 
+
     public void isSunken(Ship type) {
         final int rMin = Math.min(type.getFirstRow(), type.getSecondRow());
         final int rMax = Math.max(type.getFirstRow(), type.getSecondRow());
 
         final int cMin = Math.min(type.getFirstCol(), type.getSecondCol());
-        final int cMax = Math.min(type.getFirstCol(), type.getSecondCol());
+        final int cMax = Math.max(type.getFirstCol(), type.getSecondCol());
 
         boolean sunk = true;
 

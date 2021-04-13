@@ -66,4 +66,12 @@ final public class Ship {
     public boolean isSunken() {
         return sunken;
     }
+    
+    public void wentDown(Board board) {
+        for (int i = 0; i < rowMax - rowMin; ++i) {
+            for (int j = 0; j < colMax - colMin; ++j) {
+                
+            }
+        }        
+    }
 }

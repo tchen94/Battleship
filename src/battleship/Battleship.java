@@ -95,6 +95,10 @@ final public class Battleship {
                     hiddenField.setIndex(row, col, 'X');
                     playerField.setIndex(row, col, 'X');
 
+                    for (Ship ship : playerShips) {
+                        playerField.isSunken(ship);
+                    }
+
                     boolean sank = playerShips.removeIf(Ship::isSunken);
 
                     if (sank) {
@@ -103,9 +107,6 @@ final public class Battleship {
                             playerTwoShipsOnField--;
                         } else if (player == 2) {
                             playerOneShipsOnField--;
-                        }
-                        for (Ship ship : playerShips) {
-                            playerField.isSunken(ship);
                         }
 
                         System.out.println("You sank a ship!");
@@ -132,7 +133,6 @@ final public class Battleship {
     }
 
     public void playerTurn() {
-
 
         switch (player) {
             case 1:
@@ -256,11 +256,11 @@ final public class Battleship {
         playerTwoShips.addAll(ships);
 
         int[][] nums = {
-                {0, 0, 4, 0},
-                {0, 2, 3, 2},
-                {0, 4, 2, 4},
-                {0, 6, 2, 6},
-                {0, 8, 1, 8}
+                {0, 0, 0, 4},
+                {2, 0, 2, 3},
+                {4, 0, 4, 2},
+                {6, 0, 6, 2},
+                {8, 0, 8, 1}
         };
 
         for (int i = 0; i < 5; ++i) {
