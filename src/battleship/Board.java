@@ -29,7 +29,7 @@ public class Board {
         Matcher m = COORDINATE_PAIR_PATTERN.matcher(input);
 
         if (m.matches()) {
-            return Optional.of(new String[] { m.group(1), m.group(2) });
+            return Optional.of(new String[] {m.group(1), m.group(2)});
         }
 
         return Optional.empty();
@@ -125,7 +125,8 @@ public class Board {
                     }
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException ignored) {}
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+        }
 
         return false;
     }
@@ -164,6 +165,12 @@ public class Board {
 
     public void setIndex(int row, int col, char status) {
         field[row][col] = status;
+    }
+
+    public void hijackField(String[] board) {
+        for (int i = 0; i < MAX_ROWS; ++i) {
+            field[i] = board[i].toCharArray();
+        }
     }
 
 }

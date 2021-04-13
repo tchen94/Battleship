@@ -1,6 +1,5 @@
 package battleship;
 
-import java.io.IOException;
 import java.util.*;
 
 final public class Battleship {
@@ -34,8 +33,8 @@ final public class Battleship {
             }
 
             final String[] coordinates = coordinatePair.get();
-            int[] rows = { rowNum(coordinates[0]), rowNum(coordinates[1]) };
-            int[] cols = { colNum(coordinates[0]), colNum(coordinates[1]) };
+            int[] rows = {rowNum(coordinates[0]), rowNum(coordinates[1])};
+            int[] cols = {colNum(coordinates[0]), colNum(coordinates[1])};
 
             if (rows[0] < 0 || rows[1] < 0 || cols[0] < 0 || cols[1] < 0) {
                 System.out.println("Invalid location. Try again.");
@@ -46,7 +45,7 @@ final public class Battleship {
             int colDiff = Math.abs(cols[1] - cols[0]);
 
             if (rowDiff == 0 && colDiff != type.getLength() - 1
-                || colDiff == 0 && rowDiff != type.getLength() - 1) {
+                    || colDiff == 0 && rowDiff != type.getLength() - 1) {
                 System.out.printf("Error! Wrong length of the %s! Try again:%n", type.getName());
             } else if (rowDiff != 0 && colDiff != 0) {
                 System.out.println("Error! Wrong ship location! Try again:");
@@ -95,18 +94,20 @@ final public class Battleship {
                 if (playerField.isShip(row, col)) {
                     hiddenField.setIndex(row, col, 'X');
                     playerField.setIndex(row, col, 'X');
-                    if (player == 1) {
-                        playerTwoShipsOnField--;
-                    } else if (player == 2) {
-                        playerOneShipsOnField--;
-                    }
-                    for (Ship ship : playerShips) {
-                        playerField.isSunken(ship);
-                    }
 
                     boolean sank = playerShips.removeIf(Ship::isSunken);
 
                     if (sank) {
+
+                        if (player == 1) {
+                            playerTwoShipsOnField--;
+                        } else if (player == 2) {
+                            playerOneShipsOnField--;
+                        }
+                        for (Ship ship : playerShips) {
+                            playerField.isSunken(ship);
+                        }
+
                         System.out.println("You sank a ship!");
                     } else {
                         System.out.println("You hit a ship!");
@@ -131,6 +132,8 @@ final public class Battleship {
     }
 
     public void playerTurn() {
+
+
         switch (player) {
             case 1:
                 playerOne();
@@ -157,14 +160,10 @@ final public class Battleship {
     }
 
     public void gameplay() {
-
-        while (true) {
-            if (playerOneShipsOnField == 0) {
-                break;
-            } else if (playerTwoShipsOnField == 0) {
-                break;
-            }
+        boolean gameOver = false;
+        while (!gameOver) {
             playerTurn();
+            gameOver = playerOneShipsOnField == 0 || playerTwoShipsOnField == 0;
         }
         System.out.println("You sank the last ship. You won. Congratulations!");
     }
@@ -216,8 +215,74 @@ final public class Battleship {
         gameplay();
     }
 
+    public void hijackStart() {
+        String[] board = {
+                "OOOOO~~~~~",
+                "~~~~~~~~~~",
+                "OOOO~~~~~~",
+                "~~~~~~~~~~",
+                "OOO~~~~~~~",
+                "~~~~~~~~~~",
+                "OOO~~~~~~~",
+                "~~~~~~~~~~",
+                "OO~~~~~~~~",
+                "~~~~~~~~~~"
+        };
+        Board p1 = new Board();
+        p1.hijackField(board);
+
+        Board p2 = new Board();
+        p2.hijackField(board);
+
+        playerOneField = p1;
+        playerTwoField = p2;
+
+        List<Ship> ships = new ArrayList<>(Arrays.asList(
+                new Ship(5, "Aircraft Carrier"),
+                new Ship(4, "Battleship"),
+                new Ship(3, "Submarine"),
+                new Ship(3, "Cruiser"),
+                new Ship(2, "Destroyer")
+        ));
+        playerOneShips.addAll(ships);
+
+        ships = new ArrayList<>(Arrays.asList(
+                new Ship(5, "Aircraft Carrier"),
+                new Ship(4, "Battleship"),
+                new Ship(3, "Submarine"),
+                new Ship(3, "Cruiser"),
+                new Ship(2, "Destroyer")
+        ));
+        playerTwoShips.addAll(ships);
+
+        int[][] nums = {
+                {0, 0, 4, 0},
+                {0, 2, 3, 2},
+                {0, 4, 2, 4},
+                {0, 6, 2, 6},
+                {0, 8, 1, 8}
+        };
+
+        for (int i = 0; i < 5; ++i) {
+            playerOneShips.get(i).setRowMin(nums[i][0]);
+            playerOneShips.get(i).setColMin(nums[i][1]);
+            playerOneShips.get(i).setRowMax(nums[i][2]);
+            playerOneShips.get(i).setColMax(nums[i][3]);
+
+            playerTwoShips.get(i).setRowMin(nums[i][0]);
+            playerTwoShips.get(i).setColMin(nums[i][1]);
+            playerTwoShips.get(i).setRowMax(nums[i][2]);
+            playerTwoShips.get(i).setColMax(nums[i][3]);
+        }
+
+        playerOneShipsOnField = playerOneField.totalShips();
+        playerTwoShipsOnField = playerTwoField.totalShips();
+
+        gameplay();
+    }
+
     public static void main(String[] args) {
         Battleship game = new Battleship();
-        game.start();
+        game.hijackStart();
     }
 }
