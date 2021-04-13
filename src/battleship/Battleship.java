@@ -153,11 +153,7 @@ final public class Battleship {
 
     public void enterKeyPrompt() {
         System.out.println("Press Enter and pass the move to another player");
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            System.out.println("Please press Enter to continue");
-        }
+        scanner.nextLine();
     }
 
     public void gameplay() {
