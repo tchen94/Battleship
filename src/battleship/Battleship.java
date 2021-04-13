@@ -136,13 +136,18 @@ final public class Battleship {
                 playerOne();
                 playerMove(1, playerTwoShips, playerTwoField, playerTwoHidden);
                 player = 2;
-                enterKeyPrompt();
-
+                if (playerTwoShipsOnField != 0) {
+                    enterKeyPrompt();
+                }
+                break;
             case 2:
                 playerTwo();
                 playerMove(2, playerOneShips, playerOneField, playerOneHidden);
                 player = 1;
-                enterKeyPrompt();
+                if (playerOneShipsOnField != 0) {
+                    enterKeyPrompt();
+                }
+                break;
         }
     }
 
