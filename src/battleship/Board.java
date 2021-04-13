@@ -29,7 +29,7 @@ public class Board {
         Matcher m = COORDINATE_PAIR_PATTERN.matcher(input);
 
         if (m.matches()) {
-            return Optional.of(new String[] { m.group(1), m.group(2) });
+            return Optional.of(new String[] {m.group(1), m.group(2)});
         }
 
         return Optional.empty();
@@ -125,7 +125,8 @@ public class Board {
                     }
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException ignored) {}
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+        }
 
         return false;
     }
@@ -142,12 +143,13 @@ public class Board {
         return count;
     }
 
+
     public void isSunken(Ship type) {
         final int rMin = Math.min(type.getFirstRow(), type.getSecondRow());
         final int rMax = Math.max(type.getFirstRow(), type.getSecondRow());
 
         final int cMin = Math.min(type.getFirstCol(), type.getSecondCol());
-        final int cMax = Math.min(type.getFirstCol(), type.getSecondCol());
+        final int cMax = Math.max(type.getFirstCol(), type.getSecondCol());
 
         boolean sunk = true;
 
@@ -164,6 +166,12 @@ public class Board {
 
     public void setIndex(int row, int col, char status) {
         field[row][col] = status;
+    }
+
+    public void hijackField(String[] board) {
+        for (int i = 0; i < MAX_ROWS; ++i) {
+            field[i] = board[i].toCharArray();
+        }
     }
 
 }

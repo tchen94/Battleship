@@ -1,6 +1,6 @@
 package battleship;
 
- final public class Ship {
+final public class Ship {
 
     final private String name;
     final private int length;
@@ -15,55 +15,63 @@ package battleship;
         this.length = length;
     }
 
-     public String getName() {
-         return name;
-     }
+    public String getName() {
+        return name;
+    }
 
-     public int getLength() {
-         return length;
-     }
+    public int getLength() {
+        return length;
+    }
 
-     public void setRowMin(int rowMin) {
-         this.rowMin = rowMin;
-     }
+    public void setRowMin(int rowMin) {
+        this.rowMin = rowMin;
+    }
 
-     public void setRowMax(int rowMax) {
-         this.rowMax = rowMax;
-     }
+    public void setRowMax(int rowMax) {
+        this.rowMax = rowMax;
+    }
 
-     public void setColMin(int colMin) {
-         this.colMin = colMin;
-     }
+    public void setColMin(int colMin) {
+        this.colMin = colMin;
+    }
 
-     public void setColMax(int colMax) {
-         this.colMax = colMax;
-     }
+    public void setColMax(int colMax) {
+        this.colMax = colMax;
+    }
 
-     public int getFirstRow() {
-         return rowMin;
-     }
+    public int getFirstRow() {
+        return rowMin;
+    }
 
-     public int getSecondRow() {
-         return rowMax;
-     }
+    public int getSecondRow() {
+        return rowMax;
+    }
 
-     public int getFirstCol() {
-         return colMin;
-     }
+    public int getFirstCol() {
+        return colMin;
+    }
 
-     public int getSecondCol() {
-         return colMax;
-     }
+    public int getSecondCol() {
+        return colMax;
+    }
 
-     public boolean isHorizontal() {
+    public boolean isHorizontal() {
         return rowMin == rowMax;
-     }
+    }
 
-     public void setStatus(boolean status) {
+    public void setStatus(boolean status) {
         this.sunken = status;
-     }
+    }
 
-     public boolean isSunken() {
-         return sunken;
-     }
- }
+    public boolean isSunken() {
+        return sunken;
+    }
+    
+    public void wentDown(Board board) {
+        for (int i = 0; i < rowMax - rowMin; ++i) {
+            for (int j = 0; j < colMax - colMin; ++j) {
+                
+            }
+        }        
+    }
+}
