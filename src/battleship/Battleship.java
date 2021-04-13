@@ -1,10 +1,20 @@
 package battleship;
 
+import java.io.IOException;
 import java.util.*;
 
 final public class Battleship {
 
     final private Scanner scanner;
+    private List<Ship> playerOneShips = new ArrayList<>();
+    private List<Ship> playerTwoShips = new ArrayList<>();
+    private Board playerOneField = new Board();
+    private Board playerTwoField = new Board();
+    private Board playerOneHidden = new Board();
+    private Board playerTwoHidden = new Board();
+    private int playerOneShipsOnField;
+    private int playerTwoShipsOnField;
+    private int player = 1;
 
     public Battleship() {
 
@@ -62,31 +72,10 @@ final public class Battleship {
         return Board.intToBoardCol(Integer.parseInt(coordinate, 1, coordinate.length(), 10));
     }
 
-    public void gameplay() {
-        Board board = new Board();
-        Board hiddenBoard = new Board();
-        List<Ship> ships = new ArrayList<>(Arrays.asList(
-            new Ship(5, "Aircraft Carrier"),
-             new Ship(4, "Battleship"),
-             new Ship(3, "Submarine"),
-             new Ship(3, "Cruiser"),
-            new Ship(2, "Destroyer")
-        ));
+    public void playerMove(int player, List<Ship> playerShips, Board playerField, Board hiddenField) {
+        System.out.printf("Player %s, it's your turn:%n", player);
 
-        for (final Ship ship : ships) {
-            board.printField();
-            setShipType(ship, board);
-        }
-
-        board.printField();
-        board.totalShips();
-
-        System.out.println("The game starts!");
-        hiddenBoard.printField();
-        System.out.println("Take a shot!");
-        int oCounter = board.getO();
-
-        while (oCounter != 0) {
+        while (true) {
             Optional<String> coordinate = Board.parseCoordinate(scanner.nextLine());
 
             if (coordinate.isEmpty()) {
@@ -103,47 +92,127 @@ final public class Battleship {
             }
 
             try {
-                if (board.isShip(row, col)) {
-                    hiddenBoard.setIndex(row, col, 'X');
-                    board.setIndex(row, col, 'X');
-                    hiddenBoard.printField();
-                    for (Ship ship : ships) {
-                        board.isSunken(ship);
+                if (playerField.isShip(row, col)) {
+                    hiddenField.setIndex(row, col, 'X');
+                    playerField.setIndex(row, col, 'X');
+                    if (player == 1) {
+                        playerTwoShipsOnField--;
+                    } else if (player == 2) {
+                        playerOneShipsOnField--;
                     }
-                    boolean sank = false;
-                    for (Ship type : ships) {
-                        if (type.isSunken()) {
-                            sank = true;
-                            ships.remove(type);
-                            break;
-                        }
+                    for (Ship ship : playerShips) {
+                        playerField.isSunken(ship);
                     }
+
+                    boolean sank = playerShips.removeIf(Ship::isSunken);
+
                     if (sank) {
-                        System.out.println("You sank a ship! Specify a new target:");
+                        System.out.println("You sank a ship!");
                     } else {
-                        System.out.println("You hit a ship! Try again:");
+                        System.out.println("You hit a ship!");
                     }
-                    oCounter--;
-                } else if (board.isEmpty(row, col)) {
-                    hiddenBoard.setIndex(row, col, 'M');
-                    board.setIndex(row, col, 'M');
-                    hiddenBoard.printField();
-                    System.out.println("You missed. Try again:");
-                } else if (board.isHit(row, col)) {
-                    hiddenBoard.printField();
-                    System.out.println("You already hit this one. Try again:");
-                } else if (board.isMiss(row, col)) {
-                    hiddenBoard.printField();
-                    System.out.println("You already missed this one. Try again:");
+                    break;
+                } else if (playerField.isEmpty(row, col)) {
+                    hiddenField.setIndex(row, col, 'M');
+                    playerField.setIndex(row, col, 'M');
+                    System.out.println("You missed!");
+                    break;
+                } else if (playerField.isHit(row, col)) {
+                    System.out.println("You already hit this one.");
+                    break;
+                } else if (playerField.isMiss(row, col)) {
+                    System.out.println("You already missed this one.");
+                    break;
                 }
             } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException e) {
                 System.out.println("Error! You entered the wrong coordinates! Try again:");
             }
         }
+    }
+
+    public void playerTurn() {
+        switch (player) {
+            case 1:
+                playerOne();
+                playerMove(1, playerTwoShips, playerTwoField, playerTwoHidden);
+                player = 2;
+                if (playerTwoShipsOnField != 0) {
+                    enterKeyPrompt();
+                }
+                break;
+            case 2:
+                playerTwo();
+                playerMove(2, playerOneShips, playerOneField, playerOneHidden);
+                player = 1;
+                if (playerOneShipsOnField != 0) {
+                    enterKeyPrompt();
+                }
+                break;
+        }
+    }
+
+    public void enterKeyPrompt() {
+        System.out.println("Press Enter and pass the move to another player");
+        scanner.nextLine();
+    }
+
+    public void gameplay() {
+
+        while (true) {
+            if (playerOneShipsOnField == 0) {
+                break;
+            } else if (playerTwoShipsOnField == 0) {
+                break;
+            }
+            playerTurn();
+        }
         System.out.println("You sank the last ship. You won. Congratulations!");
     }
 
+    public void setPlayerBoard(final List<Ship> playerShips, final Board board) {
+        final List<Ship> ships = new ArrayList<>(Arrays.asList(
+                new Ship(5, "Aircraft Carrier"),
+                new Ship(4, "Battleship"),
+                new Ship(3, "Submarine"),
+                new Ship(3, "Cruiser"),
+                new Ship(2, "Destroyer")
+        ));
+
+        playerShips.addAll(ships);
+
+        for (final Ship ship : ships) {
+            board.printField();
+            setShipType(ship, board);
+        }
+    }
+
+    public void playerOne() {
+        playerTwoHidden.printField();
+        System.out.println("---------------------");
+        playerOneField.printField();
+    }
+
+    public void playerTwo() {
+        playerOneHidden.printField();
+        System.out.println("---------------------");
+        playerTwoField.printField();
+    }
+
     public void start() {
+        System.out.println("Player 1, place your ships to the game field");
+        System.out.println();
+        setPlayerBoard(playerOneShips, playerOneField);
+        playerOneField.printField();
+        playerOneShipsOnField = playerOneField.totalShips();
+        enterKeyPrompt();
+
+        System.out.println("Player 2, place your ships to the game field");
+        System.out.println();
+        setPlayerBoard(playerTwoShips, playerTwoField);
+        playerTwoField.printField();
+        playerTwoShipsOnField = playerTwoField.totalShips();
+        enterKeyPrompt();
+
         gameplay();
     }
 

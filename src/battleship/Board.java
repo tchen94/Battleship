@@ -74,7 +74,6 @@ public class Board {
             }
             System.out.println();
         }
-        System.out.println();
     }
 
     public void placeShip(Ship type) {
@@ -131,7 +130,7 @@ public class Board {
         return false;
     }
 
-    public void totalShips() {
+    public int totalShips() {
         int count = 0;
         for (char[] row : field) {
             for (char c : row) {
@@ -140,7 +139,7 @@ public class Board {
                 }
             }
         }
-        this.o = count;
+        return count;
     }
 
     public void isSunken(Ship type) {
@@ -167,7 +166,4 @@ public class Board {
         field[row][col] = status;
     }
 
-    public int getO() {
-        return o;
-    }
 }
